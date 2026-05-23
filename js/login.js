@@ -15,19 +15,23 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
 
   try {
     const res = await apiPost("/auth/login", {
-      login,
-      password
-    });
+  login,
+  password
+});
 
-    showStatus("ok", "Успешный вход. Перенаправляю...");
+// Safari/iPhone иногда не успевает сохранить cookie.
+// Поэтому делаем дополнительный запрос.
+await apiGet("/auth/me");
 
-    setTimeout(() => {
-      if (res.user.role === "admin") {
-        window.location.href = "admin.html";
-      } else {
-        window.location.href = "account.html";
-      }
-    }, 500);
+showStatus("ok", "Успешный вход. Перенаправляю...");
+
+setTimeout(() => {
+  if (res.user.role === "admin") {
+    window.location.href = "admin.html";
+  } else {
+    window.location.href = "account.html";
+  }
+}, 500);
 
   } catch (e) {
     showStatus("err", e.message || "Ошибка входа");
