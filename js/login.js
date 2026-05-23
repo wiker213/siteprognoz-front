@@ -14,16 +14,16 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
   }
 
   try {
-    const res = await apiPost("/auth/login", {
+   const res = await apiPost("/auth/login", {
   login,
   password
 });
 
-// Safari/iPhone иногда не успевает сохранить cookie.
-// Поэтому делаем дополнительный запрос.
-await apiGet("/auth/me");
+// Сохраняем JWT
+localStorage.setItem("token", res.token);
 
 showStatus("ok", "Успешный вход. Перенаправляю...");
+
 
 setTimeout(() => {
   if (res.user.role === "admin") {
