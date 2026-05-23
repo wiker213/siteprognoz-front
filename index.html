@@ -79,7 +79,7 @@
 <script>
   (async () => {
     try{
-      const region = await (await fetch("http://127.0.0.1:8000/region")).json();
+      const region = await (await fetch("https://siteprognoz-1.onrender.com/region")).json();
       const pills = document.getElementById("regionPills");
       pills.innerHTML = `
         <span class="pill"><strong>Регион:</strong> ${region.name}</span>
