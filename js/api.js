@@ -81,7 +81,6 @@ async function apiRequest(endpoint, options = {}) {
   const res = await fetch(API_URL + endpoint, {
     ...options,
     credentials: "include",
-    cache: "no-store",
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {})
@@ -107,6 +106,8 @@ async function apiPost(endpoint, data) {
     body: JSON.stringify(data)
   });
 }
+
+// Для совместимости
 async function apiPostAuth(endpoint, data) {
   return apiPost(endpoint, data);
 }
