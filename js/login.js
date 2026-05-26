@@ -19,6 +19,12 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
       password
     });
 
+    // Главное изменение:
+    // сохраняем токен, который пришёл с backend.
+    if (res.access_token) {
+      saveAccessToken(res.access_token);
+    }
+
     showStatus("ok", "Успешный вход. Перенаправляю...");
 
     setTimeout(() => {

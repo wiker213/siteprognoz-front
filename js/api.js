@@ -1,16 +1,29 @@
 const API_URL = "https://siteprognoz-1.onrender.com";
+const TOKEN_KEY = "access_token";
+
+function getAccessToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+function saveAccessToken(token) {
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token);
+  }
+}
+
+function clearAccessToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
 
 function parseError(data) {
   if (!data) {
     return "Неизвестная ошибка";
   }
 
-  // detail: "текст"
   if (typeof data.detail === "string") {
     return translateError(data.detail);
   }
 
-  // detail: [...]
   if (Array.isArray(data.detail)) {
     return data.detail
       .map(err => {
@@ -78,18 +91,32 @@ function translateError(msg) {
 }
 
 async function apiRequest(endpoint, options = {}) {
+  const token = getAccessToken();
+
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+
+  // Главное изменение:
+  // если пользователь вошёл, отправляем JWT в Authorization header.
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const res = await fetch(API_URL + endpoint, {
     ...options,
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    }
+    headers
   });
 
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
+    if (res.status === 401) {
+      clearAccessToken();
+    }
+
     throw new Error(parseError(data));
   }
 
@@ -107,7 +134,6 @@ async function apiPost(endpoint, data) {
   });
 }
 
-// Для совместимости
 async function apiPostAuth(endpoint, data) {
   return apiPost(endpoint, data);
 }

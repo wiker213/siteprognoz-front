@@ -74,6 +74,10 @@ document.getElementById("btnLogout").addEventListener("click", async () => {
     await apiPost("/auth/logout", {});
   } catch (e) {}
 
+  // Главное изменение:
+  // удаляем Bearer token при выходе.
+  clearAccessToken();
+
   window.location.href = "login.html";
 });
 
