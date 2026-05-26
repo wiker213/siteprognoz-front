@@ -14,24 +14,22 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
   }
 
   try {
-   const res = await apiPost("/auth/login", {
-  login,
-  password
-});
+    const res = await apiPost("/auth/login", {
+      login,
+      password
+    });
 
-// Сохраняем JWT
-localStorage.setItem("token", res.token);
+    localStorage.setItem("token", res.access_token);
 
-showStatus("ok", "Успешный вход. Перенаправляю...");
+    showStatus("ok", "Успешный вход. Перенаправляю...");
 
-
-setTimeout(() => {
-  if (res.user.role === "admin") {
-    window.location.href = "admin.html";
-  } else {
-    window.location.href = "account.html";
-  }
-}, 500);
+    setTimeout(() => {
+      if (res.user.role === "admin") {
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "account.html";
+      }
+    }, 500);
 
   } catch (e) {
     showStatus("err", e.message || "Ошибка входа");
