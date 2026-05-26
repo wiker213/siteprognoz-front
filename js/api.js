@@ -5,10 +5,12 @@ function parseError(data) {
     return "Неизвестная ошибка";
   }
 
+  // detail: "текст"
   if (typeof data.detail === "string") {
     return translateError(data.detail);
   }
 
+  // detail: [...]
   if (Array.isArray(data.detail)) {
     return data.detail
       .map(err => {
@@ -70,29 +72,19 @@ function translateError(msg) {
 
     "Email already exists":
       "Email уже используется",
-
-    "Не авторизован":
-      "Необходимо войти в аккаунт",
   };
 
   return translations[msg] || msg;
 }
 
 async function apiRequest(endpoint, options = {}) {
-  const token = localStorage.getItem("token");
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {})
-  };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
   const res = await fetch(API_URL + endpoint, {
     ...options,
-    headers
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
   });
 
   const data = await res.json().catch(() => null);
@@ -115,6 +107,7 @@ async function apiPost(endpoint, data) {
   });
 }
 
+// Для совместимости
 async function apiPostAuth(endpoint, data) {
   return apiPost(endpoint, data);
 }

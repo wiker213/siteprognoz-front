@@ -19,8 +19,6 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
       password
     });
 
-    localStorage.setItem("token", res.access_token);
-
     showStatus("ok", "Успешный вход. Перенаправляю...");
 
     setTimeout(() => {
