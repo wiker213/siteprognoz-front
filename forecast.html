@@ -16,7 +16,7 @@
     </a>
 
     <nav>
-       <a href="index.html" id="nav-home">Главная</a>
+      <a href="index.html" id="nav-home">Главная</a>
       <a href="calc.html" id="nav-calc">Расчёт</a>
       <a href="forecast.html" id="nav-forecast">Прогноз</a>
       <a href="charts.html" id="nav-charts">Графики</a>
@@ -29,9 +29,16 @@
 </header>
 
 <script>
-  const map={"index.html":"nav-home","calc.html":"nav-calc","forecast.html":"nav-forecast","charts.html":"nav-charts","updates.html":"nav-updates"};
-  const file=location.pathname.split("/").pop()||"index.html";
-  const id=map[file]; if(id) document.getElementById(id).classList.add("active");
+  const map = {
+    "index.html":"nav-home",
+    "calc.html":"nav-calc",
+    "forecast.html":"nav-forecast",
+    "charts.html":"nav-charts",
+    "updates.html":"nav-updates"
+  };
+  const file = location.pathname.split("/").pop() || "index.html";
+  const id = map[file];
+  if(id) document.getElementById(id).classList.add("active");
 </script>
 
 <div class="container">
@@ -39,17 +46,17 @@
 
     <div class="card glow span7">
       <h1>Прогнозирование экономических показателей</h1>
-      
 
       <div class="row">
         <div>
           <label>Метод</label>
           <select id="method">
-  <option value="average">Метод среднего уровня (константа)</option>
-  <option value="moving">Скользящее среднее (константа)</option>
-  <option value="holt">Holt-Winters / Holt (с трендом)</option>
-  <option value="neural">Нейросеть MLP</option>
-</select>
+            <option value="average">Метод среднего уровня (константа)</option>
+            <option value="moving">Скользящее среднее (константа)</option>
+            <option value="holt">Holt-Winters / Holt (с трендом)</option>
+            <option value="neural">Нейросеть MLP</option>
+            <option value="regression">Регрессионная модель (K_trud*L+ΔK_trud*ΔL+ε)</option>
+          </select>
         </div>
 
         <div>
@@ -62,14 +69,13 @@
         </div>
       </div>
 
-      <label>Временной ряд (через запятую)</label>
-      <textarea id="fvalues" placeholder="Например: 121,110,102,107.1,86.8,76.7,68.7,54.5"></textarea>
+      <label>Временной ряд</label>
+      <textarea id="fvalues" placeholder='Например для regression: [{"K_trud":1,"L":1000,"delta_K_trud":0.1,"delta_L":50,"epsilon":0.5}]'></textarea>
 
-   
       <label style="margin-top:10px;">Загрузить ряд из файла (.txt / .csv)</label>
       <input type="file" id="forecastFile" accept=".txt,.csv">
       <div class="hint">
-        Файл может содержать числа через запятую, перенос строки, точку с запятой или табуляцию.
+        Файл может содержать числа через запятую, перенос строки, точку с запятой, табуляцию или JSON для regression.
       </div>
 
       <div class="actions">
@@ -79,6 +85,7 @@
 
       <div id="fresult" class="out">Прогноз появится здесь…</div>
     </div>
+
     <div class="card span5">
       <h2>Пример входных данных</h2>
       <p><strong>Безработные (тыс. чел)</strong>, 2017–2024:</p>
@@ -90,6 +97,12 @@
       <div class="hint">
         <code>2155.7, 2146.3, 2110.9, 2126.5, 2150.4, 2167.4, 2213.1, 2235.2</code>
       </div>
+
+      <p><strong>Пример regression</strong></p>
+      <div class="hint">
+        <code>[{"K_trud":1,"L":1000,"delta_K_trud":0.1,"delta_L":50,"epsilon":0.5}]</code>
+      </div>
+
       <p><strong>Пример результата прогноза</strong></p>
       <div class="hint">
         <code>52.3, 51.1, 50.4, 49.8, 48.9, 48.5, 47.9, 47.3, 46.8, 46.5, 46.1, 45.7</code>
@@ -97,16 +110,16 @@
     </div>
 
   </div>
+
   <div class="hint">
-       Необходимо вставить временной ряд, выбрать метод прогнозирования и период. Результатом будет прогнозные значением.
-      </div>
+    Необходимо вставить временной ряд, выбрать метод прогнозирования и период. Результатом будет прогноз.
+  </div>
 </div>
 
 <script src="js/api.js"></script>
 <script src="js/forecast.js"></script>
 
 <script>
-
   function clearForecast(){
     document.getElementById("fvalues").value = "";
     const out = document.getElementById("fresult");
