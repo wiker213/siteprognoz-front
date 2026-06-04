@@ -19,8 +19,6 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
       password
     });
 
-    // Главное изменение:
-    // сохраняем токен, который пришёл с backend.
     if (res.access_token) {
       saveAccessToken(res.access_token);
     }
@@ -38,4 +36,11 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
   } catch (e) {
     showStatus("err", e.message || "Ошибка входа");
   }
+});
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+togglePassword.addEventListener("click", function () {
+  const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+  passwordInput.setAttribute("type", type);
+  this.textContent = type === "password" ? "Скрыть" : "Показать";
 });

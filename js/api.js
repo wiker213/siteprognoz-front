@@ -98,8 +98,6 @@ async function apiRequest(endpoint, options = {}) {
     ...(options.headers || {})
   };
 
-  // Главное изменение:
-  // если пользователь вошёл, отправляем JWT в Authorization header.
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }

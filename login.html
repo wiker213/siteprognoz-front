@@ -22,7 +22,10 @@
     <input id="login" placeholder="admin или user@example.com">
 
     <label for="password">Пароль</label>
-    <input id="password" type="password" placeholder="Введите пароль">
+    <div class="password-container">
+      <input id="password" type="password" placeholder="Введите пароль">
+      <button type="button" id="togglePassword" class="btn-small">Показать</button>
+    </div>
 
     <button class="btn btn-wide" id="btnLogin">
       Войти
