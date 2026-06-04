@@ -539,3 +539,38 @@ footer a {
 footer a:hover {
   text-decoration: underline;
 }
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-container input[type="password"],
+.password-container input[type="text"] {
+  flex: 1;
+  padding-right: 80px; /* чтобы кнопка не перекрывала текст */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 1em;
+}
+
+.password-container button#togglePassword {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+  cursor: pointer;
+  color: #333;
+  transition: 0.2s all;
+}
+
+.password-container button#togglePassword:hover {
+  background-color: #f0f0f0;
+  border-color: #888;
+}
