@@ -539,20 +539,21 @@ footer a {
 footer a:hover {
   text-decoration: underline;
 }
-.password-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
 .password-container input[type="password"],
 .password-container input[type="text"] {
-  flex: 1;
-  padding-right: 40px; /* место для глаза */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 10px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 40px 12px 12px; /* справа оставляем место для глазика */
+  border-radius: 12px; /* как у всех input */
+  border: 1px solid var(--stroke);
+  background: white;
+  color: var(--text);
   font-size: 1em;
+}
+
+.password-container input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(47,107,255,.12);
 }
 
 .password-container .eye-icon {
