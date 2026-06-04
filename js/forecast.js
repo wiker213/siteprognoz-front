@@ -1,3 +1,5 @@
+// forecast.js
+
 function parseSeries(raw) {
   let text = String(raw || "").trim();
 
@@ -10,7 +12,6 @@ function parseSeries(raw) {
   if (/[;\n\t]/.test(text)) {
     parts = text.split(/[;\n\t]+/);
   } else {
-
     parts = text.split(",");
   }
 
@@ -20,68 +21,86 @@ function parseSeries(raw) {
     .map(s => Number(s.replace(",", ".")));
 }
 
-
 async function runForecast() {
   const method = document.getElementById("method").value;
   const raw = document.getElementById("fvalues").value.trim();
   const horizon = Number(document.getElementById("horizon").value);
 
-  let values;
+  if (!raw) {
+    showOut("fresult", "err", "Введите временной ряд");
+    return;
+  }
 
-  if (method === "regression") {
-    // Парсим JSON массив объектов для regression
-    try {
-      values = JSON.parse(raw);
-      if (!Array.isArray(values)) throw new Error();
-    } catch {
-      showOut("fresult", "err", "Для regression введите массив объектов JSON с ключами K_trud, L, delta_K_trud, delta_L, epsilon");
-      return;
-    }
-  } else {
-    values = parseSeries(raw);
-    if (values.length === 0) {
-      showOut("fresult", "err", "Не удалось прочитать временной ряд");
-      return;
-    }
-    if (values.some(v => Number.isNaN(v))) {
-      showOut("fresult", "err", "Есть нечисловые значения. Проверь формат ввода.");
-      return;
-    }
-    if (method === "neural" && values.length < 6) {
-      showOut("fresult", "err", "Для нейросетевого прогноза желательно минимум 6 значений. Добавь больше данных.");
-      return;
-    }
+  let values = parseSeries(raw);
+
+  if (values.length === 0) {
+    showOut("fresult", "err", "Не удалось прочитать временной ряд");
+    return;
+  }
+
+  if (values.some(v => Number.isNaN(v))) {
+    showOut("fresult", "err", "Есть нечисловые значения. Проверь формат ввода.");
+    return;
+  }
+
+  if (method === "neural" && values.length < 6) {
+    showOut(
+      "fresult",
+      "err",
+      "Для нейросетевого прогноза желательно минимум 6 значений. Добавь больше данных."
+    );
+    return;
   }
 
   try {
-    const result = await apiPost("/forecast", { method, values, horizon });
+    const result = await apiPost("/forecast", {
+      method,
+      values,
+      horizon
+    });
 
     if (!result || !result.forecast || result.forecast.length === 0) {
       showOut("fresult", "err", "Не удалось получить прогноз. Проверь backend.");
       return;
     }
 
-    const lines = result.forecast.map((v, i) => `${i + 1}: ${v}`).join("\n");
-    let note = "";
-    if (method === "average") note = "\n\nПримечание: метод среднего уровня всегда даёт постоянный прогноз.";
-    if (method === "moving") note = "\n\nПримечание: скользящее среднее даёт прогноз по последнему окну.";
-    if (method === "holt") note = "\n\nПримечание: Holt учитывает тренд ряда.";
-    if (method === "neural") note = "\n\nПримечание: нейросеть обучается на введённом ряду.";
-    if (method === "regression") note = "\n\nПримечание: regression использует формулу BPP = K*L + ΔK*ΔL + ε.";
+    const lines = result.forecast
+      .map((v, i) => `${i + 1}: ${v}`)
+      .join("\n");
 
-    showOut("fresult", "ok", `Прогноз на ${horizon} период(ов):\n${lines}${note}`);
+    let note = "";
+    if (method === "average") {
+      note = "\n\nПримечание: метод среднего уровня всегда даёт постоянный прогноз.";
+    }
+    if (method === "moving") {
+      note = "\n\nПримечание: скользящее среднее даёт прогноз по последнему окну.";
+    }
+    if (method === "holt") {
+      note = "\n\nПримечание: Holt учитывает тренд ряда.";
+    }
+    if (method === "neural") {
+      note = "\n\nПримечание: нейросеть обучается на введённом ряду.";
+    }
+    if (method === "regression") {
+      note = "\n\nПримечание: regression теперь принимает обычный числовой ряд.";
+    }
+
+    showOut(
+      "fresult",
+      "ok",
+      `Прогноз на ${horizon} период(ов):\n${lines}${note}`
+    );
+
   } catch (e) {
     showOut("fresult", "err", e.message || "Ошибка прогноза");
   }
 }
-
 
 function showOut(id, type, text) {
   const el = document.getElementById(id);
   el.className = "out " + (type || "");
   el.textContent = text;
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const fileInput = document.getElementById("forecastFile");
@@ -100,11 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     reader.onload = (e) => {
       let text = String(e.target.result || "");
-
       text = text.replace(/\r\n/g, "\n");
-
       textarea.value = text;
-
       showOut(
         "fresult",
         "",
@@ -120,5 +136,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
 window.runForecast = runForecast;
+
+// Очистка поля и результатов
+function clearForecast(){
+  document.getElementById("fvalues").value = "";
+  const out = document.getElementById("fresult");
+  out.className = "out";
+  out.textContent = "Прогноз появится здесь…";
+  const file = document.getElementById("forecastFile");
+  if (file) file.value = "";
+}
