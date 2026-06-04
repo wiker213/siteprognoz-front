@@ -55,7 +55,7 @@
             <option value="moving">Скользящее среднее (константа)</option>
             <option value="holt">Holt-Winters / Holt (с трендом)</option>
             <option value="neural">Нейросеть MLP</option>
-            <option value="regression">Регрессионная модель (K_trud*L+ΔK_trud*ΔL+ε)</option>
+            <option value="regression">Регрессионная модель</option>
           </select>
         </div>
 
@@ -70,7 +70,7 @@
       </div>
 
       <label>Временной ряд</label>
-      <textarea id="fvalues" placeholder='Например для regression: [{"K_trud":1,"L":1000,"delta_K_trud":0.1,"delta_L":50,"epsilon":0.5}]'></textarea>
+      <textarea id="fvalues" placeholder='Введите численный ряд'></textarea>
 
       <label style="margin-top:10px;">Загрузить ряд из файла (.txt / .csv)</label>
       <input type="file" id="forecastFile" accept=".txt,.csv">
@@ -98,7 +98,7 @@
         <code>2155.7, 2146.3, 2110.9, 2126.5, 2150.4, 2167.4, 2213.1, 2235.2</code>
       </div>
 
-      <p><strong>Пример regression</strong></p>
+      <p><strong>Пример регрессионной модели</strong></p>
 <div class="hint">
   <code>1000, 1050, 1100, 1200, 1250, 1300, 1350, 1400</code>
 </div>
