@@ -104,6 +104,7 @@
         • <code>average</code> — константа по среднему значению<br>
         • <code>moving</code> — константа по последним значениям<br>
         • <code>holt</code> — Holt / экспоненциальное сглаживание с трендом<br>
+        • <code>regression</code> — линейная регрессия по общему тренду ряда<br>
         • <code>neural</code> — нейросетевой прогноз MLP
       </div>
 
@@ -125,7 +126,10 @@
           <input type="checkbox" id="m_holt" checked style="width:auto;">
           Holt
         </label>
-
+        <label style="margin:0; display:flex; gap:10px; align-items:center;">
+       <input type="checkbox" id="m_regression" checked style="width:auto;">
+    Регрессионная модель
+   </label>
         <label style="margin:0; display:flex; gap:10px; align-items:center;">
           <input type="checkbox" id="m_neural" checked style="width:auto;">
           Нейросеть MLP
@@ -165,10 +169,7 @@
         <canvas id="chart"></canvas>
       </div>
 
-      <div class="hint">
-        Если график пустой — проверь backend:
-        <code>http://127.0.0.1:8000</code>
-      </div>
+     
 
     </div>
 

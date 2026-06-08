@@ -68,6 +68,7 @@ function getSelectedMethods() {
   const average = document.getElementById("m_avg");
   const moving = document.getElementById("m_mov");
   const holt = document.getElementById("m_holt");
+  const regression = document.getElementById("m_regression");
   const neural = document.getElementById("m_neural");
 
   if (average && average.checked) {
@@ -88,6 +89,13 @@ function getSelectedMethods() {
     methods.push({
       id: "holt",
       title: "Holt"
+    });
+  }
+
+  if (regression && regression.checked) {
+    methods.push({
+      id: "regression",
+      title: "Регрессионная модель"
     });
   }
 
@@ -211,7 +219,9 @@ async function buildChart() {
     if (methods.some(method => method.id === "holt")) {
       note += "\nHolt учитывает тренд, но не учитывает сезонность.";
     }
-
+    if (methods.some(method => method.id === "regression")) {
+  note += "\nРегрессионная модель строит линейный тренд по всем введённым значениям ряда.";
+}
     if (methods.some(method => method.id === "neural")) {
       note += "\nНейросеть MLP обучается на введённом ряду. Чем больше данных, тем лучше прогноз.";
     }
