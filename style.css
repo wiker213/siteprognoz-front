@@ -552,7 +552,8 @@ footer a:hover {
   border: 1px solid var(--stroke);
   background: white;
   color: var(--text);
-  font-size: 1em;
+  font-size: 14px;
+  font-family: inherit;
 }
 
 .password-container input:focus {
