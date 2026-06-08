@@ -331,40 +331,43 @@ function renderChart(labels, datasets) {
             padding: 16
           }
         },
+tooltip: {
+  enabled: true,
+  mode: "nearest",
+  intersect: false,
+  backgroundColor: "rgba(17, 24, 39, 0.92)",
+  titleColor: "#ffffff",
+  bodyColor: "#ffffff",
+  borderColor: "rgba(255, 255, 255, 0.25)",
+  borderWidth: 1,
+  padding: 12,
+  displayColors: true,
 
-        tooltip: {
-          enabled: true,
-          mode: "nearest",
-          intersect: false,
-          backgroundColor: "rgba(17, 24, 39, 0.92)",
-          titleColor: "#ffffff",
-          bodyColor: "#ffffff",
-          borderColor: "rgba(255, 255, 255, 0.25)",
-          borderWidth: 1,
-          padding: 12,
-          displayColors: true,
+  callbacks: {
+    title: function (items) {
+      if (!items || !items.length) {
+        return "";
+      }
 
-          callbacks: {
-            title: function (items) {
-              if (!items || !items.length) {
-                return "";
-              }
+      const item = items[0];
+      return item.dataset.label || "Прогноз";
+    },
 
-              return "Период " + items[0].label;
-            },
+    label: function (context) {
+      const value = context.parsed.y;
 
-            label: function (context) {
-              const label = context.dataset.label || "";
-              const value = context.parsed.y;
+      if (value === null || typeof value === "undefined") {
+        return "";
+      }
 
-              if (value === null || typeof value === "undefined") {
-                return label;
-              }
+      return `Значение: ${Number(value).toFixed(3)}`;
+    },
 
-              return `${label}: ${Number(value).toFixed(3)}`;
-            }
-          }
-        }
+    afterLabel: function (context) {
+      return `Период: ${context.label}`;
+    }
+  }
+}
       },
 
       scales: {
