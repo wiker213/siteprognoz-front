@@ -1,5 +1,32 @@
 let chartInstance = null;
 
+const METHOD_COLORS = {
+  fact: {
+    borderColor: "#111827",
+    backgroundColor: "rgba(17, 24, 39, 0.12)"
+  },
+  average: {
+    borderColor: "#2563eb",
+    backgroundColor: "rgba(37, 99, 235, 0.12)"
+  },
+  moving: {
+    borderColor: "#f43f5e",
+    backgroundColor: "rgba(244, 63, 94, 0.12)"
+  },
+  holt: {
+    borderColor: "#f97316",
+    backgroundColor: "rgba(249, 115, 22, 0.12)"
+  },
+  regression: {
+    borderColor: "#7c3aed",
+    backgroundColor: "rgba(124, 58, 237, 0.12)"
+  },
+  neural: {
+    borderColor: "#14b8a6",
+    backgroundColor: "rgba(20, 184, 166, 0.12)"
+  }
+};
+
 
 function showStatus(type, text) {
   const el = document.getElementById("chartStatus");
@@ -186,9 +213,13 @@ async function buildChart() {
       datasets.push({
         label: "Факт",
         data: values.concat(Array(horizon).fill(null)),
+        borderColor: METHOD_COLORS.fact.borderColor,
+        backgroundColor: METHOD_COLORS.fact.backgroundColor,
         borderWidth: 2,
-        pointRadius: 2,
-        tension: 0.25
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        tension: 0.25,
+        fill: false
       });
     }
 
@@ -199,12 +230,21 @@ async function buildChart() {
         ? Array(values.length).fill(null).concat(forecast)
         : forecast;
 
+      const colors = METHOD_COLORS[method.id] || {
+        borderColor: "#64748b",
+        backgroundColor: "rgba(100, 116, 139, 0.12)"
+      };
+
       datasets.push({
         label: "Прогноз • " + method.title,
         data: data,
+        borderColor: colors.borderColor,
+        backgroundColor: colors.backgroundColor,
         borderWidth: 2,
-        pointRadius: 2,
-        tension: 0.25
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        tension: 0.25,
+        fill: false
       });
     }
 
@@ -219,9 +259,11 @@ async function buildChart() {
     if (methods.some(method => method.id === "holt")) {
       note += "\nHolt учитывает тренд, но не учитывает сезонность.";
     }
+
     if (methods.some(method => method.id === "regression")) {
-  note += "\nРегрессионная модель строит линейный тренд по всем введённым значениям ряда.";
-}
+      note += "\nРегрессионная модель строит линейный тренд по всем введённым значениям ряда.";
+    }
+
     if (methods.some(method => method.id === "neural")) {
       note += "\nНейросеть MLP обучается на введённом ряду. Чем больше данных, тем лучше прогноз.";
     }
@@ -268,7 +310,13 @@ function renderChart(labels, datasets) {
       maintainAspectRatio: false,
 
       interaction: {
-        mode: "index",
+        mode: "nearest",
+        intersect: false,
+        axis: "xy"
+      },
+
+      hover: {
+        mode: "nearest",
         intersect: false
       },
 
@@ -286,12 +334,36 @@ function renderChart(labels, datasets) {
 
         tooltip: {
           enabled: true,
+          mode: "nearest",
+          intersect: false,
           backgroundColor: "rgba(17, 24, 39, 0.92)",
           titleColor: "#ffffff",
           bodyColor: "#ffffff",
           borderColor: "rgba(255, 255, 255, 0.25)",
           borderWidth: 1,
-          padding: 12
+          padding: 12,
+          displayColors: true,
+
+          callbacks: {
+            title: function (items) {
+              if (!items || !items.length) {
+                return "";
+              }
+
+              return "Период " + items[0].label;
+            },
+
+            label: function (context) {
+              const label = context.dataset.label || "";
+              const value = context.parsed.y;
+
+              if (value === null || typeof value === "undefined") {
+                return label;
+              }
+
+              return `${label}: ${Number(value).toFixed(3)}`;
+            }
+          }
         }
       },
 
